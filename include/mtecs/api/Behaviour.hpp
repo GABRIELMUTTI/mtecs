@@ -3,105 +3,64 @@
 #include "mtecs/typedef/Typedef.hpp"
 #include "mtecs/entity/EntityManager.hpp"
 #include "mtecs/component/ComponentManager.hpp"
-#include "mtecs/group/GroupManager.hpp"
+#include "mtecs/component/ComponentRegistry.hpp"
 #include "mtecs/system/SystemManager.hpp"
-#include "mtecs/api/ISetter.hpp"
-#include "mtecs/system/ISystem.hpp"
-#include "mtecs/entity/Entity.hpp"
-#include "mtecs/component/ComponentHandle.hpp"
-
-#include <string>
+#include "mtecs/group/GroupManager.hpp"
 
 namespace mtecs
 {
+    typedef struct managers_s
+    {
+	internal::EntityManager* entityManager;
+	internal::ComponentManager* componentManager;
+	internal::ComponentRegistry* componentRegistry;
+	internal::SystemManager* systemManager;
+	internal::GroupManager* groupManager;
+    } Managers;
+
     class Behaviour
     {
     private:
-	internal::EntityManager& entityManager;
-	internal::ComponentManager& componentManager;
-	internal::ComponentRegistry& componentRegistry;
-	internal::GroupManager& groupManager;
-	internal::SystemManager& systemManager;
-	internal::ISetter<internal::ISystem>& behaviourSetter;
+	Managers managers;
 	
     public:
-	Behaviour(internal::EntityManager& entityManager, internal::ComponentManager& componentManager, internal::ComponentRegistry& componentRegistry, internal::GroupManager& groupManager, internal::SystemManager& systemManager, internal::ISetter<internal::ISystem>& behaviourSetter) :
-	    entityManager(entityManager),
-	    componentManager(componentManager),
-	    componentRegistry(componentRegistry),
-	    groupManager(groupManager),
-	    systemManager(systemManager),
-	    behaviourSetter(behaviourSetter)
-	{
-	    
-	}
+	Behaviour();
 
-	// Entity API:
+	void setManagers(Managers managers)
+	{
+	    this->managers = managers;
+	}
+	
+	// EntityManager functions:
 	inline Entity* createEntity(const std::string& name)
 	{
-	    return entityManager.createEntity(name);
+	    return managers.entityManager->createEntity(name);
 	}
-	
-	inline Entity* getEntity(uint entityId)
-	{
-	    return entityManager.getEntity(entityId);
-	}
-	
-	inline void destroyEntity(Entity* entity)
-	{
-	    entityManager.destroyEntity(entity->getId());
-	}
-	
+
 	inline void destroyEntity(uint entityId)
 	{
-	    entityManager.destroyEntity(entityId);
+	    managers.entityManager->destroyEntity(entityId);
 	}
 
-	// Component API:
-	template<class T>
-	inline ComponentHandle<T> addComponent(Entity* entity)
+	inline Entity* getEntity(uint entityId)
 	{
-	    return componentManager.addComponent<T>(entity->getId(), componentRegistry.getMask<T>());
+	    return managers.entityManager->getEntity(entityId);
 	}
 
-	template<class T>
-	inline void removeComponent(Entity* entity)
+	// ComponentManager functions:
+	template<class T> inline ComponentHandle<T> getComponent(Entity* entity)
 	{
-	    componentManager.removeComponent<T>(entity->getId(), componentRegistry.getMask<T>());
-	}
-	
-	template<class T>
-	inline ComponentHandle<T> getComponent(Entity* entity)
-	{
-	    return componentManager.getComponent<T>(entity->getId(), componentRegistry.getMask<T>());
+	    return ComponentHandle<T>(managers.componentManager->getComponent(entity->getId(), managers.componentRegistry->getMask<T>()));
 	}
 
-	// System API:
-	template<class T>
-	inline T* addSystem()
+	template<class T> inline ComponentHandle<T> addComponent(Entity* entity)
 	{
-	    T* system = systemManager.addSystem<T>();
-	    behaviourSetter.set(*system);
-
-	    return system;
+	    return ComponentHandle<T>(managers.componentManager->addComponent(entity->getId(), managers.componentRegistry->getMask<T>()));
 	}
 
-	template<class T>
-	inline T* getSystem(uint systemId)
+	template<class T> inline void removeComponent(Entity* entity)
 	{
-	    return systemManager.getSystem<T>(systemId);
+	    managers.componentManager->removeComponent(entity->getId(), managers.componentRegistry->getMask<T>());
 	}
-
-	inline void removeSystem(uint systemId)
-	{
-	    systemManager.removeSystem(systemId);
-	}
-
-	// Group API:
-	template<class ... TComponents>
-	inline Group* getGroup()
-	{
-	    return groupManager.getGroup<TComponents ...>();
-	}
-    };	
+    };
 }

@@ -4,13 +4,14 @@
 
 #include <vector>
 #include <cstring>
+#include <cstdint>
 
 namespace mtecs::internal
 {
     class Pool
     {
     private:
-	char* array;
+	std::uint8_t* array;
 	std::size_t objSize;
 	uint capacity;
 	uint count;
@@ -20,8 +21,9 @@ namespace mtecs::internal
 	
     public:
 	Pool(std::size_t objSize, uint allocationStep);
-	
-	char* get(uint index) const;
+
+	void* get(uint index) const;
+
 	void add();
         void remove();
         void allocate(uint amount);
@@ -30,5 +32,15 @@ namespace mtecs::internal
             
         uint getCapacity() const;
         uint getCount() const;
+
+	inline bool operator ==(const Pool& other) const
+	{
+	    return array == other.array;
+	}
+
+	inline bool operator !=(const Pool& other) const
+	{
+	    return array != other.array;
+	}
     };	
 }

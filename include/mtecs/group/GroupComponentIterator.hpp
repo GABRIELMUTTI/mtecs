@@ -1,7 +1,9 @@
 #pragma once
 
+#include "mtecs/typedef/Typedef.hpp"
 #include "mtecs/component/Mask.hpp"
 #include "mtecs/entity/Entity.hpp"
+#include "mtecs/component/Handle.hpp"
 #include "mtecs/component/ComponentHandle.hpp"
 #include "mtecs/component/ComponentManager.hpp"
 
@@ -19,21 +21,21 @@ namespace mtecs
 	Iterator containerIterator;
 	std::tuple<ComponentHandle<Components>& ...> handles;
 	std::vector<Mask> masks;
-	unsigned int currentIndex;
+	uint currentIndex;
 	const internal::ComponentManager& componentManager;
 
-	template<unsigned int N, class TFirst, class TSecond, class ... Rest>
+	template<uint N, class TFirst, class TSecond, class ... Rest>
 	void setComponents(Entity* entity)
 	{
 	    setComponents<N, TFirst>(entity);
 	    setComponents<N + 1, TSecond, Rest ...>(entity);
 	}
 
-	template<unsigned int N, class TComponent>
+	template<uint N, class TComponent>
 	void setComponents(Entity* entity)
 	{
-	    std::get<N, ComponentHandle<Components>& ...>(handles) = componentManager.getComponent<TComponent>(masks[N]);
-           
+	    internal::Handle handle = componentManager.getComponent(currentIndex, masks[N]);
+	    std::get<N, ComponentHandle<Components>& ...>(handles) = ComponentHandle<TComponent>(handle);
 	}
 
     public:

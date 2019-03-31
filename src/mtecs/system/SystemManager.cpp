@@ -1,51 +1,56 @@
 #include "mtecs/system/SystemManager.hpp"
 
-namespace mtecs
+namespace mtecs::internal
 {
-    namespace internal
+    SystemManager::SystemManager(SystemFactory* systemFactory) :
+	systemFactory(systemFactory)
     {
-	SystemManager::SystemManager()
-	{
 	
-	}
-    
-	void SystemManager::initialize()
-	{
-	    for (ISystem* newSystem : newSystems)
-	    {
-		newSystem->initialize();
-	    }
-
-	    newSystems.clear();
-	}
-
-	void SystemManager::removeSystem(uint systemId)
-	{
-	    if (systemId >= systems.size()) { return; }
-	
-	    ISystem* system = systems[systemId];
-	    systems.erase(std::remove(systems.begin(), systems.end(), system), systems.end());
-	}
-
-	void SystemManager::update(float deltaTime)
-	{
-	    for (ISystem* newSystem : newSystems)
-	    {
-		newSystem->initialize();
-	    }
-	
-	    for (ISystem* system : systems)
-	    {
-		system->update(deltaTime);
-	    }
-	}
-    
-	void SystemManager::addSystem(uint systemTypeId)
-	{
-	    ISystem* newSystem = systemFactory.create(systemTypeId, systems.size());
-
-	    systems.push_back(newSystem);
-	    newSystems.push_back(newSystem);
-	}	
     }
+    
+    void SystemManager::initialize()
+    {
+	for (System* newSystem : newSystems)
+	{
+	    newSystem->initialize();
+	}
+
+	newSystems.clear();
+    }
+
+    void SystemManager::removeSystem(uint systemUid)
+    {
+	if (systemUid >= systems.size()) { return; }
+	
+	System* system = systems[systemUid];
+	systems.erase(std::remove(systems.begin(), systems.end(), system), systems.end());
+    }
+
+    void SystemManager::update(float deltaTime)
+    {
+	for (System* newSystem : newSystems)
+	{
+	    newSystem->initialize();
+	}
+	
+	for (System* system : systems)
+	{
+	    system->update(deltaTime);
+	}
+    }
+    
+    void SystemManager::addSystem(uint systemUid)
+    {
+	System* newSystem = systemFactory->create(systemUid, systems.size());
+
+	systems.push_back(newSystem);
+	newSystems.push_back(newSystem);
+    }
+
+    System* SystemManager::getSystem(uint systemUid) const
+    {
+	if (systemUid >= systems.size()) { return nullptr; }
+	return systems[systemUid];	    
+    }
+    
 }

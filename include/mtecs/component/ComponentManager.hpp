@@ -3,87 +3,29 @@
 #include "mtecs/typedef/Typedef.hpp"
 #include "mtecs/component/Mask.hpp"
 #include "mtecs/component/Pool.hpp"
-#include "mtecs/component/ComponentHandle.hpp"
+#include "mtecs/component/Handle.hpp"
 
 #include <typeindex>
 #include <vector>
 
-namespace mtecs
+namespace mtecs::internal
 {
-    namespace internal
+    class ComponentManager
     {
-	class ComponentManager
-	{
-	private:
-	    std::vector<Pool*> componentPools;
-	    uint allocationStep;
+    private:
+	std::vector<Pool*> componentPools;
+	uint allocationStep;
 
-	private:
-	    template<class T>
-	    void createPool(std::size_t componentSize, uint index)
-	    {
-		Pool* newPool = new Pool(componentSize, allocationStep);
+    private:
+	void createPool(std::size_t componentSize, uint index);
+	void allocateInPools();
 
-		if (index >= componentPools.size())
-		{
-		    componentPools.resize(index + 1, nullptr);
-		}
-	    
-		componentPools[index] = newPool;
-	    }
+    public:
+	ComponentManager(uint allocationStep);
 
-	    void allocateInPools();
+	Handle getComponent(uint entityId, const Mask& mask) const;
+	Handle addComponent(uint entityId, const Mask& mask);
+	void removeComponent(uint entityId, const Mask& mask);
+    };	
 
-	public:
-	    ComponentManager(uint allocationStep);
-
-	    template<class T>
-	    ComponentHandle<T> getComponent(uint entityId, const Mask& mask) const
-	    {
-		unsigned int poolIndex = mask.index();
-		return ComponentHandle<T>(componentPools[poolIndex], entityId);
-	    }
-
-	    template<class T>
-	    ComponentHandle<T> addComponent(uint entityId, const Mask& mask)
-	    {
-		uint index = mask.index();
-		Pool<Component>* pool;
-
-		// Fetch pool;
-		if (index + 1 <= componentPools.size())
-		{
-		    pool = componentPools[index];
-		}
-		else // Create new pool.
-		{
-		    createPool<T>(index);
-		    pool = componentPools[index];
-		}
-
-		if (pool == nullptr)
-		{
-		    createPool<T>(index);
-		    pool = componentPools[index];
-		}
-
-		uint poolCapacity = pool->getCapacity();
-		if (entityId >= poolCapacity)
-		{
-		    pool->allocate((entityId - poolCapacity) + allocationStep);    
-		}
-
-		pool->add(entityId);
-
-		return ComponentHandle<T>(componentPools[index], entityId);
-	    }
-
-	    template<class T>
-	    void removeComponent(uint entityId, const Mask& mask)
-	    {
-		uint index = mask.index();
-		componentPools[index]->remove(entityId);
-	    }
-	};	
-    }
 }

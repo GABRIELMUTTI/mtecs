@@ -9,7 +9,7 @@ namespace mtecs::internal
 
     Pool::Pool(std::size_t objSize, uint allocationStep) :
 	array(nullptr),
-	objSize(sizeof(char) * objSize),
+	objSize(sizeof(std::uint8_t) * objSize),
 	capacity(0),
 	count(0),
 	allocationStep(allocationStep)
@@ -28,15 +28,15 @@ namespace mtecs::internal
 	count--;
     }
 
-    char* Pool::get(uint index) const
+    void* Pool::get(uint index) const
     {
-	return &array[index];
+	return (void*)(&array[index]);
     }
 
     void Pool::allocate(uint amount)
     {
 	uint newCapacity = capacity + amount;
-	char* newArray = new char[sizeof(char) * objSize];
+	std::uint8_t* newArray = new std::uint8_t[sizeof(std::uint8_t) * objSize];
 
 	if (array != nullptr)
 	{
@@ -57,7 +57,7 @@ namespace mtecs::internal
 
 	if (newCapacity > 0)
 	{
-	    char* newArray = new char[sizeof(char) * objSize];
+	    std::uint8_t* newArray = new std::uint8_t[sizeof(std::uint8_t) * objSize];
 
 	    if (array != nullptr)
 	    {
@@ -82,7 +82,7 @@ namespace mtecs::internal
     {
 	if (isIndexValid(indexA) && isIndexValid(indexB))
 	{
-	    char* tmp = new char[objSize];
+	    std::uint8_t* tmp = new std::uint8_t[objSize];
 
 	    memcpy(tmp, &array[indexB], objSize);
 	    memcpy(&array[indexB], &array[indexA], objSize);

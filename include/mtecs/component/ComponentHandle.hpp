@@ -1,8 +1,7 @@
 #pragma once
 
 #include "mtecs/typedef/Typedef.hpp"
-#include "mtecs/component/Component.hpp"
-#include "mtecs/component/Pool.hpp"
+#include "mtecs/component/Handle.hpp"
 
 namespace mtecs
 {
@@ -10,47 +9,33 @@ namespace mtecs
     class ComponentHandle
     {
     private:
-	uint index;
-	const internal::Pool<Component>* componentPool;
+	internal::Handle& handle;
 	
     public:
-	ComponentHandle() :
-	    index(0),
-	    componentPool(nullptr)
+	ComponentHandle(internal::Handle& handle) :
+	    handle(handle)
 	{
 	      
 	}
-	
-	ComponentHandle(const internal::Pool<Component>* componentPool, uint index) :
-	    index(index),
-	    componentPool(componentPool)
-	{
-
-	}
-
-	bool isValid()
-	{
-	    return componentPool != nullptr;
-	}
             
-	T* operator ->()
+	inline T* operator ->()
 	{ 
-	    return static_cast<T*>(componentPool->get(index));
+	    return static_cast<T*>(handle.get());
 	}
 
-	T operator *()
+	inline T operator *()
 	{ 
-	    return *static_cast<T*>(componentPool->get(index)); 
+	    return *static_cast<T*>(handle.get());
 	}
 
-	bool operator ==(const ComponentHandle<T>& other)
+	inline bool operator ==(const ComponentHandle<T>& other)
 	{
-	    return componentPool == other.componentPool && index == other.index;
+	    return handle == other.handle;
 	}
 
-	bool operator !=(const ComponentHandle<T>& other)
+	inline bool operator !=(const ComponentHandle<T>& other)
 	{
-	    return componentPool != other.componentPool || index != other.index;
+	    return handle != other.handle;
 	}
     };
 }

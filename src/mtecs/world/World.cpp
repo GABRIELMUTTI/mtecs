@@ -2,24 +2,35 @@
 
 namespace mtecs
 {
-    World::World(Behaviour* behaviour) :
+    World::World(const std::string& name, Behaviour* behaviour) :
 	behaviour(behaviour),
+	name(name),
 	componentManager(internal::ComponentManager(100)),
 	groupManager(internal::GroupManager(entityManager, componentManager, componentRegistry)),
-	systemSetter(internal::SystemSetter(behaviour)),
-	behaviour(new ::Behaviour(entityManager, componentManager, componentRegistry, groupManager, systemManager, systemSetter))
+	systemManager(internal::SystemManager(new internal::SystemFactory(behaviour)))
     {
-	
+	behaviour->setManagers(getManagers());
     }
-
+    
     void World::update(float deltaTime)
     {
 	systemManager.update(deltaTime);
     }
 
-    internal::Behaviour* World::getBehaviour()
+    Behaviour* World::getBehaviour()
     {
 	return behaviour;
     }
-}
 
+    Managers World::getManagers()
+    {
+	Managers managers;
+	managers.entityManager = &entityManager;
+	managers.componentManager = &componentManager;
+	managers.componentRegistry = &componentRegistry;
+	managers.systemManager = &systemManager;
+	managers.groupManager = &groupManager;
+
+	return managers;
+    }
+}
