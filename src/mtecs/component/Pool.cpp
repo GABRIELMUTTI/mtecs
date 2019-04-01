@@ -18,12 +18,12 @@ namespace mtecs::internal
     }
 
             
-    void Pool::add()
+    void Pool::add(uint index)
     {
 	count++;
     }
 
-    void Pool::remove()
+    void Pool::remove(uint index)
     {
 	count--;
     }
@@ -37,12 +37,14 @@ namespace mtecs::internal
     {
 	uint newCapacity = capacity + amount;
 	std::uint8_t* newArray = new std::uint8_t[sizeof(std::uint8_t) * objSize];
-
+	handles.resize(newCapacity, Handle(*this, -1));
+	
 	if (array != nullptr)
 	{
 	    for (uint i = 0; i < capacity; i++)
 	    {
 		newArray[i] = array[i];
+		handles[i] = Handle(*this, i);
 	    }
 	}
 
@@ -54,7 +56,8 @@ namespace mtecs::internal
     void Pool::deallocate(uint amount)
     {
 	int newCapacity = capacity - amount;
-
+	handles.resize(newCapacity, Handle(*this, -1));
+	
 	if (newCapacity > 0)
 	{
 	    std::uint8_t* newArray = new std::uint8_t[sizeof(std::uint8_t) * objSize];

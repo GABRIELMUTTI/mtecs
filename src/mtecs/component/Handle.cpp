@@ -2,7 +2,7 @@
 
 namespace mtecs::internal
 {
-    Handle::Handle(const Pool& pool, uint index) :
+    Handle::Handle(IPool& pool, uint index) :
 	pool(pool),
 	index(index)
     {

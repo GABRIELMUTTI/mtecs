@@ -55,7 +55,7 @@ namespace mtecs
 
 	template<class T> inline ComponentHandle<T> addComponent(Entity* entity)
 	{
-	    return ComponentHandle<T>(managers.componentManager->addComponent(entity->getId(), managers.componentRegistry->getMask<T>()));
+	    return ComponentHandle<T>(managers.componentManager->addComponent(entity->getId(), managers.componentRegistry->getMask<T>(), sizeof(T)));
 	}
 
 	template<class T> inline void removeComponent(Entity* entity)

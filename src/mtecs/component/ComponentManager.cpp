@@ -34,7 +34,7 @@ namespace mtecs::internal
 	return Handle(*componentPools[poolIndex], entityId);
     }
 
-    Handle ComponentManager::addComponent(uint entityId, const Mask& mask)
+    Handle ComponentManager::addComponent(uint entityId, const Mask& mask, std::size_t componentSize)
     {
 	uint index = mask.index();
 	Pool* pool;
@@ -46,13 +46,13 @@ namespace mtecs::internal
 	}
 	else // Create new pool.
 	{
-	    createPool<T>(index);
+	    createPool(index, componentSize);
 	    pool = componentPools[index];
 	}
 
 	if (pool == nullptr)
 	{
-	    createPool<T>(index);
+	    createPool(index, componentSize);
 	    pool = componentPools[index];
 	}
 
@@ -64,7 +64,7 @@ namespace mtecs::internal
 
 	pool->add(entityId);
 
-	return Handle(componentPools[index], entityId);
+	return Handle(*componentPools[index], entityId);
     }
 
     void ComponentManager::removeComponent(uint entityId, const Mask& mask)

@@ -24,7 +24,7 @@ namespace mtecs::internal
 	ComponentManager(uint allocationStep);
 
 	Handle getComponent(uint entityId, const Mask& mask) const;
-	Handle addComponent(uint entityId, const Mask& mask);
+	Handle addComponent(uint entityId, const Mask& mask, std::size_t componentSize);
 	void removeComponent(uint entityId, const Mask& mask);
     };	
 
