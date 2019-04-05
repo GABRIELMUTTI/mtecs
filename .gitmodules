@@ -1,6 +1,0 @@
-[submodule "libs/utilities"]
-	path = libs/utilities
-	url = https://github.com/GABRIELMUTTI/utilities.git
-[submodule "utl"]
-	path = utl
-	url = https://github.com/GABRIELMUTTI/utl.git
