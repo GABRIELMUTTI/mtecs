@@ -5,7 +5,7 @@ LD_FLAGS 	:= -shared
 BIN		:= bin
 MAIN		:= src
 SRC		:= src/mtecs/**
-INCLUDE		:= -Iinclude -I../utilities/include
+INCLUDE		:= -Iinclude -Ilibs/utilities/include
 LIB		:= lib
 
 LIBRARIES	:=

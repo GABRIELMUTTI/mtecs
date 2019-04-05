@@ -26,6 +26,7 @@ namespace mtecs::internal
     void Pool::remove(uint index)
     {
 	count--;
+	handles[index].invalidate()
     }
 
     void* Pool::get(uint index) const

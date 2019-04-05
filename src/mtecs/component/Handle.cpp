@@ -3,15 +3,25 @@
 namespace mtecs::internal
 {
     Handle::Handle(IPool& pool, uint index) :
-	pool(pool),
-	index(index)
+		pool(pool),
+		index(index)
     {
 	
     }
 	
     void* Handle::get()
     {
-	return pool.get(index);
+		return pool.get(index);
     }
+    
+    bool Handle::valid()
+    {
+		return isValid;
+	}
+	
+	void Handle::invalidate()
+	{
+		isValid = false;
+	}
 }
 
