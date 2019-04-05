@@ -7,6 +7,8 @@
 #include "mtecs/system/SystemManager.hpp"
 #include "mtecs/group/GroupManager.hpp"
 
+#include <utl/type/TypeInfo.hpp>
+
 namespace mtecs
 {
     typedef struct managers_s

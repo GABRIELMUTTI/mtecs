@@ -7,9 +7,11 @@
 
 #include <utilities/factory/Factory.hpp>
 
+#include <type_index>
+
 namespace mtecs::internal
 {
-    class SystemFactory : public utility::Factory<System, uint, uint>
+    class SystemFactory : public utility::Factory<System, std::type_index, uint>
     {
     private:
 	Behaviour* behaviour;
@@ -17,6 +19,6 @@ namespace mtecs::internal
     public:
 	SystemFactory(Behaviour* behaviour);
 
-	System* create(uint systemUid, uint id);
+	System* create(std::type_index systemType, uint id);
     };
 }

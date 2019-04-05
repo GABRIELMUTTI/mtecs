@@ -8,9 +8,9 @@ namespace mtecs::internal
 
     }
     
-    System* SystemFactory::create(uint systemUid, uint id)
+    System* SystemFactory::create(std::type_index systemType, uint id)
     {
-	System* system = utility::Factory<System, uint, uint>::create(systemUid, id);
+	System* system = utility::Factory<System, std::type_index, uint>::create(systemType, id);
 	BaseSystem* baseSystem = (BaseSystem*)system;
 
 	baseSystem->setBehaviour(*behaviour);

@@ -25,3 +25,24 @@ namespace mtecs
 	void setMask(const Mask& mask);
     };
 }
+
+// auto comp = getComponent<T>(entity);
+// auto comp = entity->getComponent<T>();
+
+// MetaClass<T>::getId()
+
+/*
+  
+  registry::registeredComponents;
+
+  template<class T>
+  {
+  static id;
+  }
+
+
+
+
+
+
+*/

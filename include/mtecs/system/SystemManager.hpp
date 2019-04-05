@@ -12,7 +12,7 @@ namespace mtecs::internal
 {
     class SystemManager
     {
-	typedef utility::Factory<System, uint, uint> SystemFactory;
+	typedef utility::Factory<System, std::type_index, uint> SystemFactory;
 	
     private:
 	std::vector<System*> systems;
@@ -26,8 +26,11 @@ namespace mtecs::internal
 	void initialize();
 	void update(float deltaTime);
 
-	System* getSystem(uint systemUid) const;
-	void addSystem(uint systemUid);
-	void removeSystem(uint systemUid);
+	System* getSystem(std::type_index systemUid) const;
+	void addSystem(std::type_index systemUid);
+	void removeSystem(std::type_index systemUid);
     };	
 }
+
+
+
