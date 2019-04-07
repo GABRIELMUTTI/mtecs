@@ -2,18 +2,16 @@
 
 namespace mtecs::internal
 {
-    SystemFactory::SystemFactory(Behaviour* behaviour) :
-	behaviour(behaviour)
+    SystemFactory::SystemFactory(Managers managers) :
+	managers(managers)
     {
 
     }
     
-    System* SystemFactory::create(std::type_index systemType, uint id)
+    System* SystemFactory::create(uint key, uint id)
     {
-	System* system = utility::Factory<System, std::type_index, uint>::create(systemType, id);
-	BaseSystem* baseSystem = (BaseSystem*)system;
-
-	baseSystem->setBehaviour(*behaviour);
+	System* system = utility::Factory<System, uint, uint>::create(key, id);
+	system->setManagers(managers);
 
 	return system;
     }

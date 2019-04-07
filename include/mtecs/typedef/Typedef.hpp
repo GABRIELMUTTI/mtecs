@@ -2,5 +2,5 @@
 
 namespace mtecs
 {
-    typedef unsigned int uint;
+    using uint = unsigned int;
 }

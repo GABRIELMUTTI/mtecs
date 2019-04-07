@@ -2,10 +2,9 @@
 
 namespace mtecs
 {
-    Group::Group(const Mask& mask, const internal::ComponentManager& componentManager, internal::ComponentRegistry& componentRegistry) :
+    Group::Group(const Mask& mask, const internal::ComponentManager& componentManager) :
 	mask(mask),
-	componentManager(componentManager),
-	componentRegistry(componentRegistry)
+	componentManager(componentManager)
     {
 
     }

@@ -3,9 +3,7 @@
 #include "mtecs/typedef/Typedef.hpp"
 #include "mtecs/entity/Entity.hpp"
 #include "mtecs/component/Mask.hpp"
-#include "mtecs/component/ComponentHandle.hpp"
 #include "mtecs/component/ComponentManager.hpp"
-#include "mtecs/component/ComponentRegistry.hpp"
 #include "mtecs/group/GroupComponentView.hpp"
 
 #include <vector>
@@ -21,10 +19,9 @@ namespace mtecs
 	Mask mask;
 	Entities entities;
 	const internal::ComponentManager& componentManager;
-	internal::ComponentRegistry& componentRegistry;
 	
     public:
-	Group(const Mask& mask, const internal::ComponentManager& componentManager, internal::ComponentRegistry& componentRegistry);
+	Group(const Mask& mask, const internal::ComponentManager& componentManager);
 
 	Entity* get(uint index) const;
 	void add(Entity* entity);
@@ -40,7 +37,7 @@ namespace mtecs
 	template<class ... Components>
 	GroupComponentView<Components ...> getEntities(ComponentHandle<Components>& ... handles)
 	{
-	    return GroupComponentView<Components ...>(entities, handles ..., componentManager, componentRegistry);
+	    return GroupComponentView<Components ...>(entities, handles ..., componentManager);
 	}
     };
 }

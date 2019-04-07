@@ -2,23 +2,21 @@
 
 #include "mtecs/typedef/Typedef.hpp"
 #include "mtecs/system/System.hpp"
-#include "mtecs/api/Behaviour.hpp"
-#include "mtecs/api/BaseSystem.hpp"
+#include "mtecs/world/Managers.hpp"
 
-#include <utilities/factory/Factory.hpp>
 
-#include <type_index>
+#include <utl/factory/Factory.hpp>
 
 namespace mtecs::internal
 {
-    class SystemFactory : public utility::Factory<System, std::type_index, uint>
+    class SystemFactory : public utility::Factory<System, uint, uint>
     {
     private:
-	Behaviour* behaviour;
+	Managers managers;
 
     public:
-	SystemFactory(Behaviour* behaviour);
+	SystemFactory(Managers managers);
 
-	System* create(std::type_index systemType, uint id);
+	System* create(uint key, uint id);
     };
 }

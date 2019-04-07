@@ -19,8 +19,7 @@ namespace mtecs
 
     private:
 	Iterator containerIterator;
-	std::tuple<ComponentHandle<Components>& ...> handles;
-	std::vector<Mask> masks;
+	std::tuple<GenericHandle<Components>& ...> handles;
 	uint currentIndex;
 	const internal::ComponentManager& componentManager;
 
@@ -34,15 +33,14 @@ namespace mtecs
 	template<uint N, class TComponent>
 	void setComponents(Entity* entity)
 	{
-	    internal::Handle handle = componentManager.getComponent(currentIndex, masks[N]);
-	    std::get<N, ComponentHandle<Components>& ...>(handles) = ComponentHandle<TComponent>(handle);
+	    auto handle = componentManager.getComponent<TComponent>();
+	    std::get<N, GenericHandle<Components>& ...>(handles) = handle;
 	}
 
     public:
-	GroupComponentIterator(Iterator containerIterator, std::tuple<ComponentHandle<Components>& ...> handles, const std::vector<Mask>& masks, const internal::ComponentManager& componentManager) :
+	GroupComponentIterator(Iterator containerIterator, std::tuple<GenericHandle<Components>& ...> handles, const internal::ComponentManager& componentManager) :
 	    containerIterator(containerIterator),
 	    handles(handles),
-	    masks(masks),
 	    componentManager(componentManager)
 	{
  

@@ -2,41 +2,38 @@
 
 #include "mtecs/group/Group.hpp"
 #include "mtecs/entity/EntityManager.hpp"
-#include "mtecs/component/ComponentRegistry.hpp"
+#include "mtecs/component/ComponentManager.hpp"
 
-namespace mtecs
+namespace mtecs::internal
 {
-    namespace internal
+    class GroupManager
     {
-	class GroupManager
-	{
-	private:
-	    std::vector<Group*> groups;
-	    const EntityManager& entityManager;
-	    const ComponentManager& componentManager;
-	    ComponentRegistry& componentRegistry;
+    private:
+	std::vector<Group*> groups;
+	const EntityManager& entityManager;
+	const ComponentManager& componentManager;
 
-	    void createGroup(const Mask& mask);
+	void createGroup(const Mask& mask);
 	
-	public:
-	    GroupManager(const EntityManager& entityManager, const ComponentManager& componentManager, ComponentRegistry& componentRegistry);
+    public:
+	GroupManager(const EntityManager& entityManager, const ComponentManager& componentManager, ComponentRegistry& componentRegistry);
 
-	    template<class ... Types>
-	    Group* getGroup()
-	    {
-		Mask mask = componentRegistry.getMask<Types ...>();
+	template<class ... Types>
+	Group* getGroup()
+	{
+	    Mask mask = componentManager.getMask<Types ...>();
                 
-		for (uint i = 0; i < groups.size(); i++)
+	    for (uint i = 0; i < groups.size(); i++)
+	    {
+		if (groups[i]->getMask() == mask)
 		{
-		    if (groups[i]->getMask() == mask)
-		    {
-			return groups[i];
-		    }
+		    return groups[i];
 		}
-
-		createGroup(mask);
-		return groups[groups.size() - 1];
 	    }
-	};	
-    }
+
+	    createGroup(mask);
+	    return groups[groups.size() - 1];
+	}
+    };	
+
 }

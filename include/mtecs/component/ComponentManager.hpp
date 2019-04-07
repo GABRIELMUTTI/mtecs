@@ -2,10 +2,11 @@
 
 #include "mtecs/typedef/Typedef.hpp"
 #include "mtecs/component/Mask.hpp"
-#include "mtecs/component/Pool.hpp"
-#include "mtecs/component/Handle.hpp"
 
-#include <typeindex>
+#include <utl/type/TypeInfo.hpp>
+#include <utl/memory/ArrayPool.hpp>
+#include <utl/memory/GenericHandle.hpp>
+
 #include <vector>
 
 namespace mtecs::internal
@@ -13,19 +14,57 @@ namespace mtecs::internal
     class ComponentManager
     {
     private:
-	std::vector<Pool*> componentPools;
+	std::vector<ArrayPool*> componentPools;
 	uint allocationStep;
 
-    private:
-	void createPool(std::size_t componentSize, uint index);
-	void allocateInPools();
-
     public:
-	ComponentManager(uint allocationStep);
+	ComponentManager(uint allocationStep) :
+	    allocationStep(allocationStep)
+	{
+	    uint numDerivedClasses = utl::TypeInfo::getNumRegisteredClasses<Component>();
+	    componentPools.resize(numDerivedClasses, new ArrayPool(allocationStep));
+	}
 
-	Handle getComponent(uint entityId, const Mask& mask) const;
-	Handle addComponent(uint entityId, const Mask& mask, std::size_t componentSize);
-	void removeComponent(uint entityId, const Mask& mask);
+	template<class T>
+	GenericHandle<T> getComponent(uint entityId, const utl::Type& type) const
+	{
+	    uint componentIndex = utl::TypeInfo::getDerivedClassId<T, Component>();
+	    ArrayPool* pool = componentPools[componentIndex];
+	
+	    return Handle(*pool, pool->get(entityId));
+	}
+
+	template<class T>
+	GenericHandle<T> addComponent(uint entityId, const utl::Type& type)
+	{
+	    uint componentIndex = utl::TypeInfo::getDerivedClassId<T, Component>();
+	    ArrayPool* pool = componentPools[componentIndex];
+
+	    pool->add(entityId);
+
+	    return GenericHandle<T>(*pool, pool->get(entityId), true);
+	}
+
+	template<class T>
+	void removeComponent(uint entityId, const utl::Type& type)
+	{
+	    uint componentIndex = utl::TypeInfo::getDerivedClassId<T, Component>();
+	    ArrayPool* pool = componentPools[componentIndex];
+
+	    pool->remove(entityId);
+	}
+
+	template<class TFirst, class ... TRest>
+	Mask getMask()
+	{
+	    Mask mask = getMask<TFirst>();
+	    return mask | getMask<TRest ...>();
+	}
+	
+	template<class T>
+	Mask getMask()
+	{
+	    return Mask(TypeInfo::getTypeId<T>());
+	}
     };	
-
 }

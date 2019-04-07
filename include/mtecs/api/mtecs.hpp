@@ -7,5 +7,4 @@
 namespace mtecs
 {
     World* createWorld(const std::string& name);
-    World* createWorld(const std::string& name, Behaviour* behaviour);
 }

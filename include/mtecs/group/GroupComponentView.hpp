@@ -18,44 +18,26 @@ namespace mtecs
     
     private:
 	const Entities& entities;
-	const std::vector<Mask> masks;
 	std::tuple<ComponentHandle<Components>& ...> handles;
 	const internal::ComponentManager& componentManager;
-	internal::ComponentRegistry& componentRegistry;
-
-	template<class TFirst, class TSecond, class ... Rest>
-	void getMasks(std::vector<Mask>& masks)
-	{
-	    getMasks<TFirst>(masks);
-	    getMasks<TSecond, Rest ...>(masks);
-	}
-
-	template<class Type>
-	void getMasks(std::vector<Mask>& masks)
-	{
-	    masks.push_back(componentRegistry.getMask<Type>());
-	}
 	
     public:
-	GroupComponentView(const Entities& entities, ComponentHandle<Components>& ... handles, const internal::ComponentManager& componentManager, internal::ComponentRegistry& componentRegistry) :
+	GroupComponentView(const Entities& entities, ComponentHandle<Components>& ... handles, const internal::ComponentManager& componentManager) :
 	    entities(entities),
-	    masks(masks),
 	    handles(handles ...),
-	    componentManager(componentManager),
-	    componentRegistry(componentRegistry)
+	    componentManager(componentManager)
 	{
 
-	    getMasks<Components ...>(masks);
 	}
 
 	GroupComponentIterator<Entities, Components ...> begin()
 	{
-	    return GroupComponentIterator<Entities, Components ...>(entities.begin(), handles, masks, componentManager);
+	    return GroupComponentIterator<Entities, Components ...>(entities.begin(), handles, componentManager);
 	}     
 
 	GroupComponentIterator<Entities, Components ...> end()
 	{
-	    return GroupComponentIterator<Entities, Components ...>(entities.end(), handles, masks, componentManager);
+	    return GroupComponentIterator<Entities, Components ...>(entities.end(), handles, componentManager);
 	}      
     };
 }

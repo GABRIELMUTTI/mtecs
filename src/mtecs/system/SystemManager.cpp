@@ -18,13 +18,7 @@ namespace mtecs::internal
 	newSystems.clear();
     }
 
-    void SystemManager::removeSystem(uint systemUid)
-    {
-	if (systemUid >= systems.size()) { return; }
-	
-	System* system = systems[systemUid];
-	systems.erase(std::remove(systems.begin(), systems.end(), system), systems.end());
-    }
+
 
     void SystemManager::update(float deltaTime)
     {
@@ -37,20 +31,5 @@ namespace mtecs::internal
 	{
 	    system->update(deltaTime);
 	}
-    }
-    
-    void SystemManager::addSystem(uint systemUid)
-    {
-	System* newSystem = systemFactory->create(systemUid, systems.size());
-
-	systems.push_back(newSystem);
-	newSystems.push_back(newSystem);
-    }
-
-    System* SystemManager::getSystem(uint systemUid) const
-    {
-	if (systemUid >= systems.size()) { return nullptr; }
-	return systems[systemUid];	    
-    }
-    
+    }    
 }
