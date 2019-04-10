@@ -2,9 +2,10 @@
 
 namespace mtecs
 {
-    Entity::Entity(uint id, const std::string& name) :
+    Entity::Entity(uint id, const std::string& name, internal::ComponentManager& componentManager) :
 	id(id),
-	name(name)
+	name(name),
+	componentManager(componentManager)
     {
 	
     }

@@ -2,31 +2,37 @@
 
 #include "mtecs/typedef/Typedef.hpp"
 #include "mtecs/entity/Entity.hpp"
+#include "mtecs/component/ComponentManager.hpp"
 
-#include <utilities/property/StructureProperty.hpp>
+#include <utl/property/StructureProperty.hpp>
 
 #include <vector>
 #include <string>
 #include <algorithm>
 
-namespace mtecs
+namespace mtecs::internal
 {
-    namespace internal
+    class EntityManager
     {
-	class EntityManager
-	{
-	private:
-	    std::vector<Entity*> entities;
-	    std::vector<uint> freeFragmentedIndexes;
+    private:
+	std::vector<Entity*> entities;
+	std::vector<Entity*> newEntities;
+	std::vector<Entity*> deadEntities;
 
-	public:
-	    const utility::StructureProperty<std::vector<Entity*>> Entities;
+	std::vector<uint> freeFragmentedIndexes;
+	ComponentManager& componentManager;
 
-	    EntityManager();
+    public:
+	const utl::StructureProperty<std::vector<Entity*>> Entities;
+	const utl::StructureProperty<std::vector<Entity*>> NewEntities;
+	const utl::StructureProperty<std::vector<Entity*>> DeadEntities;
+	    
+	EntityManager(ComponentManager& componentManager);
             
-	    Entity* createEntity(const std::string& name);
-	    void destroyEntity(uint entityId);
-	    Entity* getEntity(uint entityId);
-	};		
-    }
+	Entity* createEntity(const std::string& name);
+	void destroyEntity(uint entityId);
+	Entity* getEntity(uint entityId);
+
+	void clearNewEntities();
+    };		
 }

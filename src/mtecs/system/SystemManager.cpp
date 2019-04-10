@@ -2,8 +2,9 @@
 
 namespace mtecs::internal
 {
-    SystemManager::SystemManager(SystemFactory* systemFactory) :
-	systemFactory(systemFactory)
+    SystemManager::SystemManager(utl::Injector<System>& systemInjector) :
+	systemInjector(systemInjector),
+	customInjector(nullptr)
     {
 	
     }
@@ -18,18 +19,18 @@ namespace mtecs::internal
 	newSystems.clear();
     }
 
-
-
     void SystemManager::update(float deltaTime)
     {
 	for (System* newSystem : newSystems)
 	{
 	    newSystem->initialize();
 	}
-	
+
 	for (System* system : systems)
 	{
 	    system->update(deltaTime);
 	}
+
+	newSystems.clear();
     }    
 }

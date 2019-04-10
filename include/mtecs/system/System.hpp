@@ -1,7 +1,6 @@
 #pragma once
 
 #include "mtecs/typedef/Typedef.hpp"
-#include "mtecs/world/Managers.hpp"
 
 namespace mtecs::internal
 {   

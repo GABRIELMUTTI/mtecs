@@ -5,6 +5,9 @@
 #include "mtecs/component/Mask.hpp"
 #include "mtecs/component/ComponentManager.hpp"
 #include "mtecs/group/GroupComponentView.hpp"
+#include "mtecs/component/ComponentHandle.hpp"
+
+#include <utl/memory/ArrayPool.hpp>
 
 #include <vector>
 #include <algorithm>
@@ -32,7 +35,7 @@ namespace mtecs
 
 	Mask getMask() const;
 
-	const Entities& getEntities() const;
+	const Entities& getEntities1() const;
 
 	template<class ... Components>
 	GroupComponentView<Components ...> getEntities(ComponentHandle<Components>& ... handles)

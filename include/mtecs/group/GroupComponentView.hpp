@@ -2,9 +2,10 @@
 
 #include "mtecs/entity/Entity.hpp"
 #include "mtecs/group/GroupComponentIterator.hpp"
-#include "mtecs/component/ComponentHandle.hpp"
 #include "mtecs/component/ComponentManager.hpp"
-#include "mtecs/component/ComponentRegistry.hpp"
+#include "mtecs/component/ComponentHandle.hpp"
+
+#include <utl/memory/ArrayPool.hpp>
 
 #include <vector>
 #include <tuple>

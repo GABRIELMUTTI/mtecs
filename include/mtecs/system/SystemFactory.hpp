@@ -2,6 +2,7 @@
 
 #include "mtecs/typedef/Typedef.hpp"
 #include "mtecs/system/System.hpp"
+#include "mtecs/system/BaseSystem.hpp"
 #include "mtecs/world/Managers.hpp"
 
 
@@ -9,7 +10,7 @@
 
 namespace mtecs::internal
 {
-    class SystemFactory : public utility::Factory<System, uint, uint>
+    class SystemFactory : public utl::Factory<System, uint, uint>
     {
     private:
 	Managers managers;

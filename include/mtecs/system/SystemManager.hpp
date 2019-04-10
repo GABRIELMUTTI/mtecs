@@ -5,6 +5,7 @@
 
 #include <utl/factory/Factory.hpp>
 #include <utl/type/TypeInfo.hpp>
+#include <utl/injection/Injector.hpp>
 
 #include <vector>
 #include <algorithm>
@@ -13,16 +14,17 @@ namespace mtecs::internal
 {
     class SystemManager
     {
-	typedef utility::Factory<System, uint, uint> SystemFactory;
+	using SystemFactory = utl::Factory<System, uint, uint>;
 	
     private:
 	std::vector<System*> systems;
 	std::vector<System*> newSystems;
 
-	SystemFactory* systemFactory;
+	utl::Injector<System>& systemInjector;
+	utl::Injector<System>* customInjector;
 
     public:
-	SystemManager(SystemFactory* systemFactory);
+	SystemManager(utl::Injector<System>& systemInjector);
 	
 	void initialize();
 	void update(float deltaTime);
@@ -31,25 +33,34 @@ namespace mtecs::internal
 	T* getSystem() const
 	{
 	    uint systemIndex = utl::TypeInfo::getDerivedClassId<T, System>();
-	    return systems[systemIndex];
+	    return static_cast<T*>(systems[systemIndex]);
 	}
 
 	template<class T>
-	void addSystem()
+	T* addSystem()
 	{
 	    uint systemKey = utl::TypeInfo::getDerivedClassId<T, System>();
-	    System* system = systemFactory->create(systemKey, systems.size());
+	    System* system = new T(systemKey);
+
+	    systemInjector.inject(*system);
+
+	    if (customInjector != nullptr)
+	    {
+		customInjector->inject(*system);
+	    }
 
 	    systems.push_back(system);
 	    newSystems.push_back(system);
+
+	    return static_cast<T*>(system);
 	}
 
 	template<class T>
-	void removeSystem(std::type_index systemUid)
+	void removeSystem()
 	{
 	    uint systemKey = utl::TypeInfo::getDerivedClassId<T, System>();
 	
-	    System* system = systems[systemUid];
+	    System* system = systems[systemKey];
 	    systems.erase(std::remove(systems.begin(), systems.end(), system), systems.end());
 	    newSystems.erase(std::remove(systems.begin(), systems.end(), system), systems.end());
 	}

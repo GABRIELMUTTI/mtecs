@@ -2,10 +2,13 @@
 
 #include "mtecs/typedef/Typedef.hpp"
 #include "mtecs/component/Mask.hpp"
+#include "mtecs/component/Component.hpp"
+#include "mtecs/component/ComponentHandle.hpp"
 
 #include <utl/type/TypeInfo.hpp>
 #include <utl/memory/ArrayPool.hpp>
-#include <utl/memory/GenericHandle.hpp>
+#include <utl/memory/IPool.hpp>
+
 
 #include <vector>
 
@@ -14,57 +17,75 @@ namespace mtecs::internal
     class ComponentManager
     {
     private:
-	std::vector<ArrayPool*> componentPools;
+	std::vector<utl::IPool<Component>*> componentPools;
 	uint allocationStep;
 
     public:
 	ComponentManager(uint allocationStep) :
 	    allocationStep(allocationStep)
 	{
-	    uint numDerivedClasses = utl::TypeInfo::getNumRegisteredClasses<Component>();
-	    componentPools.resize(numDerivedClasses, new ArrayPool(allocationStep));
+
 	}
 
 	template<class T>
-	GenericHandle<T> getComponent(uint entityId, const utl::Type& type) const
+	ComponentHandle<T> getComponent(uint entityId) const
 	{
 	    uint componentIndex = utl::TypeInfo::getDerivedClassId<T, Component>();
-	    ArrayPool* pool = componentPools[componentIndex];
-	
-	    return Handle(*pool, pool->get(entityId));
+	    
+	    using PoolType = utl::ArrayPool<Component, T>;
+	    PoolType* pool = static_cast<PoolType*>(componentPools[componentIndex]);
+
+	    return ComponentHandle<T>(pool, pool->getHandle(entityId));
 	}
 
 	template<class T>
-	GenericHandle<T> addComponent(uint entityId, const utl::Type& type)
+	ComponentHandle<T> addComponent(uint entityId)
 	{
+
+	    
 	    uint componentIndex = utl::TypeInfo::getDerivedClassId<T, Component>();
-	    ArrayPool* pool = componentPools[componentIndex];
+
+	    if (componentIndex >= componentPools.size())
+	    {
+		componentPools.resize(componentIndex + 1, nullptr);
+		
+	    }
+
+	    using PoolType = utl::ArrayPool<Component, T>;
+	    PoolType* pool = static_cast<PoolType*>(componentPools[componentIndex]);
+
+	    if (pool == nullptr)
+	    {
+		pool = new PoolType(allocationStep);
+		componentPools[componentIndex] = pool;
+	    }
 
 	    pool->add(entityId);
 
-	    return GenericHandle<T>(*pool, pool->get(entityId), true);
+
+	    return ComponentHandle<T>(pool, pool->getHandle(entityId));
 	}
 
 	template<class T>
-	void removeComponent(uint entityId, const utl::Type& type)
+	void removeComponent(uint entityId)
 	{
 	    uint componentIndex = utl::TypeInfo::getDerivedClassId<T, Component>();
-	    ArrayPool* pool = componentPools[componentIndex];
+	    auto pool = componentPools[componentIndex];
 
 	    pool->remove(entityId);
 	}
 
-	template<class TFirst, class ... TRest>
-	Mask getMask()
+	template<class TFirst, class TSecond, class ... TRest>
+	Mask getMask() const
 	{
 	    Mask mask = getMask<TFirst>();
-	    return mask | getMask<TRest ...>();
+	    return mask | getMask<TSecond, TRest ...>();
 	}
 	
 	template<class T>
-	Mask getMask()
+	Mask getMask() const
 	{
-	    return Mask(TypeInfo::getTypeId<T>());
+	    return Mask(utl::TypeInfo::getId<T>());
 	}
     };	
 }

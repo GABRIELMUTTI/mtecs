@@ -21,9 +21,9 @@ namespace mtecs::internal
 	    
 	}
 	
-	EntityManager* const entityManager;
-	ComponentManager* const componentManager;
-	SystemManager* const systemManager;
-	GroupManager* const groupManager;
+	EntityManager* entityManager;
+	ComponentManager* componentManager;
+	SystemManager* systemManager;
+	GroupManager* groupManager;
     };
 }

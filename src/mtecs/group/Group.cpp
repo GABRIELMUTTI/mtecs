@@ -39,7 +39,7 @@ namespace mtecs
 	return mask;
     }
 
-    const std::vector<Entity*>& Group::getEntities() const
+    const std::vector<Entity*>& Group::getEntities1() const
     {
 	return entities;
     }

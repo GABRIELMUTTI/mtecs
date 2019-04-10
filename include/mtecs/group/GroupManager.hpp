@@ -16,8 +16,10 @@ namespace mtecs::internal
 	void createGroup(const Mask& mask);
 	
     public:
-	GroupManager(const EntityManager& entityManager, const ComponentManager& componentManager, ComponentRegistry& componentRegistry);
+	GroupManager(const EntityManager& entityManager, const ComponentManager& componentManager);
 
+	void updateGroups();
+	
 	template<class ... Types>
 	Group* getGroup()
 	{

@@ -3,9 +3,10 @@
 #include "mtecs/typedef/Typedef.hpp"
 #include "mtecs/component/Mask.hpp"
 #include "mtecs/entity/Entity.hpp"
-#include "mtecs/component/Handle.hpp"
-#include "mtecs/component/ComponentHandle.hpp"
 #include "mtecs/component/ComponentManager.hpp"
+#include "mtecs/component/ComponentHandle.hpp"
+
+#include <utl/memory/ArrayPool.hpp>
 
 #include <tuple>
 #include <vector>
@@ -19,7 +20,7 @@ namespace mtecs
 
     private:
 	Iterator containerIterator;
-	std::tuple<GenericHandle<Components>& ...> handles;
+	std::tuple<ComponentHandle<Components>& ...> handles;
 	uint currentIndex;
 	const internal::ComponentManager& componentManager;
 
@@ -34,11 +35,11 @@ namespace mtecs
 	void setComponents(Entity* entity)
 	{
 	    auto handle = componentManager.getComponent<TComponent>();
-	    std::get<N, GenericHandle<Components>& ...>(handles) = handle;
+	    std::get<N, ComponentHandle<Components>& ...>(handles) = handle;
 	}
 
     public:
-	GroupComponentIterator(Iterator containerIterator, std::tuple<GenericHandle<Components>& ...> handles, const internal::ComponentManager& componentManager) :
+	GroupComponentIterator(Iterator containerIterator, std::tuple<ComponentHandle< Components>& ...> handles, const internal::ComponentManager& componentManager) :
 	    containerIterator(containerIterator),
 	    handles(handles),
 	    componentManager(componentManager)

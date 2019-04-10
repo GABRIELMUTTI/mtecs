@@ -10,8 +10,10 @@ namespace mtecs::internal
     
     System* SystemFactory::create(uint key, uint id)
     {
-	System* system = utility::Factory<System, uint, uint>::create(key, id);
-	system->setManagers(managers);
+	System* system = utl::Factory<System, uint, uint>::create(key, id);
+
+	BaseSystem* baseSystem = static_cast<BaseSystem*>(system);
+	baseSystem->setManagers(managers);
 
 	return system;
     }

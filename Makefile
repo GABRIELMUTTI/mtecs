@@ -1,15 +1,15 @@
 CXX  		:= g++
-CXX_FLAGS 	:= -std=c++17 -fPIC -Wall -Wextra -Wfatal-errors -fdiagnostics-color -g
-LD_FLAGS 	:= -shared
+CXX_FLAGS 	:= -std=c++17 -fPIC -Wall -Wextra -Werror -Wfatal-errors -Wno-unused-parameter -fdiagnostics-color -O3
+LD_FLAGS 	:=
 
 BIN		:= bin
 MAIN		:= src
 SRC		:= src/mtecs/**
-INCLUDE		:= -Iinclude -Ilibs/utilities/include
-LIB		:= lib
+INCLUDE		:= -Iinclude -Ilibs/utl/include
+LIB		:= libs
 
 LIBRARIES	:=
-EXECUTABLE	:= libmtecs.so
+EXECUTABLE	:= main
 
 all: $(BIN)/$(EXECUTABLE)
 

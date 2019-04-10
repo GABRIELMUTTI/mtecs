@@ -2,7 +2,7 @@
 
 #include "mtecs/typedef/Typedef.hpp"
 #include "mtecs/component/Mask.hpp"
-#include "mtecs/component/ComponentManager"
+#include "mtecs/component/ComponentManager.hpp"
 
 #include <string>
 
